@@ -15,11 +15,13 @@
     "next": "10.0.3",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "recharts": "^1.8.5",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
     "@types/node": "^14.14.10",
     "@types/react": "^17.0.0",
+    "@types/recharts": "^1.8.17",
     "@types/styled-components": "^5.1.4",
     "@typescript-eslint/parser": "^4.9.0",
     "eslint": "^7.15.0",

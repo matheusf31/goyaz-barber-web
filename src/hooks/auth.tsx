@@ -1,39 +1,40 @@
-import { type } from 'os';
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import api from '../services/api';
 
-interface ISignInCredential { 
-  email: string; 
+interface ISignInCredential {
+  email: string;
   password: string;
 }
 
 interface IAuthContextData {
-  user: object;
+  user: Record<string, unknown>;
   signIn(credential: ISignInCredential): Promise<void>;
+  signOut(): void;
 }
 
 const AuthContext = createContext<IAuthContextData>({} as IAuthContextData);
 
 function AuthProvider({ children }): JSX.Element {
-  const [profile, setProfile] = useState(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem('@GoyazBarber:token');
-      const user = localStorage.getItem('@GoyazBarber:user');
-    
-      if (token && user) {
-        return { token, user: JSON.parse(user)};
-      }
+  const router = useRouter();
+  const [profile, setProfile] = useState({});
 
-      return undefined;
+  useEffect(() => {
+    const token = localStorage.getItem('@GoyazBarber:token');
+    const user = localStorage.getItem('@GoyazBarber:user');
+
+    if (token && user) {
+      api.defaults.headers.authorization = `Bearer ${token}`;
+      setProfile({ token, user: JSON.parse(user) });
     }
-  });
-  
+  }, []);
+
   const signIn = useCallback(async ({ email, password }: ISignInCredential) => {
     try {
       const response = await api.post('/sessions', {
         email,
         password,
-        device_id: 'web'
+        device_id: 'web',
       });
 
       const { token, user } = response.data;
@@ -42,19 +43,26 @@ function AuthProvider({ children }): JSX.Element {
         localStorage.setItem('@GoyazBarber:token', token);
         localStorage.setItem('@GoyazBarber:user', JSON.stringify(user));
       }
-      
-      console.log(token, user);
+
+      api.defaults.headers.authorization = `Bearer ${token}`;
 
       setProfile({ token, user });
-
-      alert('sucesso');
     } catch (error) {
-      alert(error.response.data.message);  
+      alert(error.response.data.message);
     }
   }, []);
 
+  const signOut = useCallback(() => {
+    localStorage.removeItem('@GoyazBarber:token');
+    localStorage.removeItem('@GoyazBarber:user');
+
+    setProfile({});
+
+    router.push('/');
+  }, [router]);
+
   return (
-    <AuthContext.Provider value={{ user: profile?.user, signIn }}>
+    <AuthContext.Provider value={{ user: profile?.user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
@@ -64,7 +72,7 @@ function useAuth(): IAuthContextData {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error('useAuth most be use within an AuthProvider')
+    throw new Error('useAuth most be use within an AuthProvider');
   }
 
   return context;
