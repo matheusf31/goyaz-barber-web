@@ -1,7 +1,6 @@
-import { useCallback } from "react";
+import { useCallback } from 'react';
 
-export default function Dashboard() {
-
+export default function Dashboard(): JSX.Element {
   const logout = useCallback(() => {
     alert('logout 2');
   }, []);
