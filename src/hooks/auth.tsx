@@ -2,6 +2,10 @@ import { useRouter } from 'next/router';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import api from '../services/api';
 
+interface Props {
+  children: JSX.Element[] | JSX.Element;
+}
+
 interface ISignInCredential {
   email: string;
   password: string;
@@ -13,11 +17,16 @@ interface IAuthContextData {
   signOut(): void;
 }
 
+interface IProfile {
+  token: string;
+  user: Record<string, unknown>;
+}
+
 const AuthContext = createContext<IAuthContextData>({} as IAuthContextData);
 
-function AuthProvider({ children }): JSX.Element {
+function AuthProvider({ children }: Props): JSX.Element {
   const router = useRouter();
-  const [profile, setProfile] = useState({});
+  const [profile, setProfile] = useState<IProfile>({} as IProfile);
 
   useEffect(() => {
     const token = localStorage.getItem('@GoyazBarber:token');
@@ -56,7 +65,7 @@ function AuthProvider({ children }): JSX.Element {
     localStorage.removeItem('@GoyazBarber:token');
     localStorage.removeItem('@GoyazBarber:user');
 
-    setProfile({});
+    setProfile({} as IProfile);
 
     router.push('/');
   }, [router]);

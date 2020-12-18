@@ -14,6 +14,7 @@ type IWeekInfo = {
 } & {
   profitWithoutAdditionals: number;
   profitWithAdditionals: number;
+  totalClientsInWeek: number;
 };
 
 interface IAppointmentsDailyInfo {

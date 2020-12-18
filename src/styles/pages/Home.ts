@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
@@ -6,7 +6,7 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
 
-  height: 100vh;  
+  height: 100vh;
 `;
 
 export const Title = styled.h1``;
@@ -15,7 +15,6 @@ export const Form = styled.form`
   display: flex;
   flex-direction: column;
   padding: 10px;
-
 
   width: 90vw;
   max-width: 600px;
@@ -45,6 +44,5 @@ export const Form = styled.form`
     &:hover {
       background-color: #0065f3;
     }
-    
   }
 `;
