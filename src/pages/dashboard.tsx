@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -22,12 +22,11 @@ import { IAppointmentExtraDailyInfo } from '../dtos/_IAppointmentsDailyInfo';
 
 import {
   Container,
-  LogoutButton,
   Header,
+  LogoutButton,
   ClientNumberContainer,
   ClientGraphsContainer,
 } from '../styles/pages/Dashboard';
-import { type } from 'os';
 
 interface IRenderActiveShape {
   cx: number;
@@ -341,20 +340,20 @@ export default function Dashboard(): JSX.Element {
 
   return (
     <Container>
-      <LogoutButton onClick={signOut}>Logout</LogoutButton>
-
       <Header>
-        <button onClick={() => setDate(subMonths(date, 1))}>{'<'}</button>
+        <div>
+          <button onClick={() => setDate(subMonths(date, 1))}>{'<'}</button>
+          <h1>{format(date, 'MMMM - yyyy', { locale: ptBR })}</h1>
+          <button onClick={() => setDate(addMonths(date, 1))}>{'>'}</button>
+        </div>
 
-        <h1>{format(date, 'MMMM - yyyy', { locale: ptBR })}</h1>
-
-        <button onClick={() => setDate(addMonths(date, 1))}>{'>'}</button>
+        <LogoutButton onClick={signOut}>Logout</LogoutButton>
       </Header>
 
       {showGraphs && (
         <ClientNumberContainer>
-          <h2>Número de clientes</h2>
-          {console.log(window.innerWidth)}
+          <h4>Número de clientes</h4>
+
           <ClientGraphsContainer>
             <LineChart
               width={windowSize.width <= 800 ? windowSize.width / 1.3 : 700}
