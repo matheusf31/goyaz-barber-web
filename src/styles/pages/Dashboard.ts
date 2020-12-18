@@ -15,7 +15,6 @@ export const Header = styled.header`
   justify-content: center;
   margin: 20px 0 40px;
 
-  background-color: red;
   width: 100%;
 
   div {
