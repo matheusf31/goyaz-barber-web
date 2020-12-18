@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -27,6 +27,7 @@ import {
   ClientNumberContainer,
   ClientGraphsContainer,
 } from '../styles/pages/Dashboard';
+import { type } from 'os';
 
 interface IRenderActiveShape {
   cx: number;
@@ -159,6 +160,12 @@ const renderCustomizedLabel = ({
 export default function Dashboard(): JSX.Element {
   const { signOut, user } = useAuth();
 
+  const [showGraphs, setShowGraphs] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: 0,
+    height: 0,
+  });
+
   const [appointmentsInfo, setAppointmentsInfo] = useState<IAppointmentExtraDailyInfo>();
   const [data, setData] = useState<IData>([]);
   const [date, setDate] = useState(new Date());
@@ -190,7 +197,22 @@ export default function Dashboard(): JSX.Element {
     },
   ]);
 
-  const [showGraphs, setShowGraphs] = useState(false);
+  const handleResize = useCallback(() => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+
+      handleResize();
+
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, [handleResize]);
 
   useEffect(() => {
     setShowGraphs(false);
@@ -332,11 +354,11 @@ export default function Dashboard(): JSX.Element {
       {showGraphs && (
         <ClientNumberContainer>
           <h2>Número de clientes</h2>
-
+          {console.log(window.innerWidth)}
           <ClientGraphsContainer>
             <LineChart
-              width={800}
-              height={450}
+              width={windowSize.width <= 800 ? windowSize.width / 1.3 : 700}
+              height={400}
               data={data}
               margin={{ top: 20, right: 20, left: 20, bottom: 30 }}
             >
@@ -353,7 +375,7 @@ export default function Dashboard(): JSX.Element {
               <Line type="linear" dataKey="week 6" stroke="#a31313" />
             </LineChart>
 
-            <PieChart width={450} height={300}>
+            <PieChart width={500} height={300}>
               <Pie
                 activeIndex={activeIndex}
                 labelLine={false}
