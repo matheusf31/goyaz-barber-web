@@ -43,13 +43,6 @@ export const Header = styled.header`
       }
     }
   }
-
-  @media (max-width: 500px) {
-    div {
-      position: absolute;
-      bottom: 0;
-    }
-  }
 `;
 
 export const LogoutButton = styled.button`
@@ -69,11 +62,17 @@ export const LogoutButton = styled.button`
   &:hover {
     background-color: #0065f3;
   }
+
+  @media (max-width: 600px) {
+    align-self: flex-end;
+    position: relative;
+  }
 `;
 
 export const ClientNumberContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
 
   h4 {
     display: flex;

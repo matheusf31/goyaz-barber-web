@@ -340,15 +340,17 @@ export default function Dashboard(): JSX.Element {
 
   return (
     <Container>
-      <Header>
-        <div>
-          <button onClick={() => setDate(subMonths(date, 1))}>{'<'}</button>
-          <h1>{format(date, 'MMMM - yyyy', { locale: ptBR })}</h1>
-          <button onClick={() => setDate(addMonths(date, 1))}>{'>'}</button>
-        </div>
+      <LogoutButton onClick={signOut}>Logout</LogoutButton>
 
-        <LogoutButton onClick={signOut}>Logout</LogoutButton>
-      </Header>
+      {windowSize.width >= 600 && (
+        <Header>
+          <div>
+            <button onClick={() => setDate(subMonths(date, 1))}>{'<'}</button>
+            <h1>{format(date, 'MMMM - yyyy', { locale: ptBR })}</h1>
+            <button onClick={() => setDate(addMonths(date, 1))}>{'>'}</button>
+          </div>
+        </Header>
+      )}
 
       {showGraphs && (
         <ClientNumberContainer>
@@ -394,6 +396,16 @@ export default function Dashboard(): JSX.Element {
             </PieChart>
           </ClientGraphsContainer>
         </ClientNumberContainer>
+      )}
+
+      {windowSize.width < 600 && (
+        <Header>
+          <div>
+            <button onClick={() => setDate(subMonths(date, 1))}>{'<'}</button>
+            <h1>{format(date, 'MMMM - yyyy', { locale: ptBR })}</h1>
+            <button onClick={() => setDate(addMonths(date, 1))}>{'>'}</button>
+          </div>
+        </Header>
       )}
     </Container>
   );

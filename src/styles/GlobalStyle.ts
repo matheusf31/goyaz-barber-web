@@ -35,7 +35,7 @@ export default createGlobalStyle`
 
   @media (max-width: 700px) {
     :root {
-      font-size: 80%;
+      font-size: 85%;
     }
   }
 `;
