@@ -356,7 +356,7 @@ export default function Dashboard(): JSX.Element {
 
           <ClientGraphsContainer>
             <LineChart
-              width={windowSize.width <= 800 ? windowSize.width / 1.3 : 700}
+              width={windowSize.width <= 800 ? windowSize.width / 1.1 : 700}
               height={400}
               data={data}
               margin={{ top: 20, right: 20, left: 20, bottom: 30 }}

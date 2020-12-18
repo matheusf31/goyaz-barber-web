@@ -43,13 +43,20 @@ export const Header = styled.header`
       }
     }
   }
+
+  @media (max-width: 500px) {
+    div {
+      position: absolute;
+      bottom: 0;
+    }
+  }
 `;
 
 export const LogoutButton = styled.button`
   position: absolute;
   right: 0;
   margin: 1rem;
-  padding: 0 1rem;
+  padding: 0rem 1.4rem;
   line-height: 2rem;
   border-radius: 10px;
   background-color: #0070f3;
