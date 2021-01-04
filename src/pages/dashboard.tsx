@@ -520,7 +520,7 @@ export default function Dashboard(): JSX.Element {
               <YAxis padding={{ top: 30 }} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="profit with additionals" fill="#f5f5f5" label={{ position: 'top' }}>
+              <Bar dataKey="profit with additionals" fill="#000" label={{ position: 'top' }}>
                 {monthProfitByWeek.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % 20]} />
                 ))}
@@ -547,7 +547,7 @@ export default function Dashboard(): JSX.Element {
               <YAxis padding={{ top: 30 }} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="profit without additionals" fill="#f5f5f5" label={{ position: 'top' }}>
+              <Bar dataKey="profit without additionals" fill="#000" label={{ position: 'top' }}>
                 {monthProfitByWeek.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % 20]} />
                 ))}
