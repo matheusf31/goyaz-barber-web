@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -12,6 +12,8 @@ import {
   Sector,
   Cell,
   PieLabelRenderProps,
+  BarChart,
+  Bar,
 } from 'recharts';
 import { ptBR } from 'date-fns/locale';
 import { addMonths, format, subMonths } from 'date-fns';
@@ -24,8 +26,10 @@ import {
   Container,
   Header,
   LogoutButton,
-  ClientNumberContainer,
+  GraphsContainer,
   ClientGraphsContainer,
+  PieChartContainer,
+  ProfitByWeekGraphsContainer,
 } from '../styles/pages/Dashboard';
 
 interface IRenderActiveShape {
@@ -195,6 +199,45 @@ export default function Dashboard(): JSX.Element {
       value: 0,
     },
   ]);
+  const [monthProfitByWeek, setMonthProfitByWeek] = useState([
+    {
+      name: 'Week 1',
+      'profit without additionals': 0,
+      'profit with additionals': 0,
+    },
+    {
+      name: 'Week 2',
+      'profit without additionals': 0,
+      'profit with additionals': 0,
+    },
+    {
+      name: 'Week 3',
+      'profit without additionals': 0,
+      'profit with additionals': 0,
+    },
+    {
+      name: 'Week 4',
+      'profit without additionals': 0,
+      'profit with additionals': 0,
+    },
+    {
+      name: 'Week 5',
+      'profit without additionals': 0,
+      'profit with additionals': 0,
+    },
+    {
+      name: 'Week 6',
+      'profit without additionals': 0,
+      'profit with additionals': 0,
+    },
+  ]);
+  const [totalClients, setTotalClients] = useState(0);
+  const [totalProfitWithAdditionals, setTotalProfitWithAdditionals] = useState(0);
+  const [totalProfitWithoutAdditionals, setTotalProfitWithoutAdditionals] = useState(0);
+
+  const monthName = useMemo(() => {
+    return format(date, 'MMMM', { locale: ptBR });
+  }, [date]);
 
   const handleResize = useCallback(() => {
     setWindowSize({
@@ -287,6 +330,7 @@ export default function Dashboard(): JSX.Element {
         'week 6': 0,
       },
     ] as IData;
+    let totalClientsInMonth = 0;
 
     updatedData.forEach((day) => {
       for (let index = 1; index <= 6; index++) {
@@ -294,11 +338,13 @@ export default function Dashboard(): JSX.Element {
 
         if (appointmentsInfo && appointmentsInfo[weekName]) {
           day[weekName] = appointmentsInfo[weekName][day.name].clients;
+          totalClientsInMonth += appointmentsInfo[weekName][day.name].clients;
         }
       }
     });
 
     setData(updatedData);
+    setTotalClients(totalClientsInMonth);
   }, [appointmentsInfo]);
 
   useEffect(() => {
@@ -329,36 +375,89 @@ export default function Dashboard(): JSX.Element {
       },
     ];
 
-    updatedData.forEach((day) => {
-      if (appointmentsInfo && appointmentsInfo[day.name]) {
-        day.value = appointmentsInfo[day.name].totalClientsInWeek;
+    updatedData.forEach((week) => {
+      if (appointmentsInfo && appointmentsInfo[week.name]) {
+        week.value = appointmentsInfo[week.name].totalClientsInWeek;
       }
     });
 
     setTotalClientsByWeekInfo(updatedData);
   }, [appointmentsInfo]);
 
+  useEffect(() => {
+    const updatedData = [
+      {
+        name: 'week 1',
+        'profit without additionals': 0,
+        'profit with additionals': 0,
+      },
+      {
+        name: 'week 2',
+        'profit without additionals': 0,
+        'profit with additionals': 0,
+      },
+      {
+        name: 'week 3',
+        'profit without additionals': 0,
+        'profit with additionals': 0,
+      },
+      {
+        name: 'week 4',
+        'profit without additionals': 0,
+        'profit with additionals': 0,
+      },
+      {
+        name: 'week 5',
+        'profit without additionals': 0,
+        'profit with additionals': 0,
+      },
+      {
+        name: 'week 6',
+        'profit without additionals': 0,
+        'profit with additionals': 0,
+      },
+    ];
+
+    let totalProfitWithAdditionalsInMonth = 0;
+    let totalProfitWithoutAdditionalsInMonth = 0;
+
+    updatedData.forEach((week) => {
+      if (appointmentsInfo && appointmentsInfo[week.name]) {
+        week['profit with additionals'] = appointmentsInfo[week.name].profitWithAdditionals;
+        totalProfitWithAdditionalsInMonth += appointmentsInfo[week.name].profitWithAdditionals;
+        week['profit without additionals'] = appointmentsInfo[week.name].profitWithoutAdditionals;
+        totalProfitWithoutAdditionalsInMonth +=
+          appointmentsInfo[week.name].profitWithoutAdditionals;
+      }
+    });
+
+    setMonthProfitByWeek(updatedData);
+    setTotalProfitWithAdditionals(totalProfitWithAdditionalsInMonth);
+    setTotalProfitWithoutAdditionals(totalProfitWithoutAdditionalsInMonth);
+  }, [appointmentsInfo]);
+
   return (
     <Container>
       <LogoutButton onClick={signOut}>Logout</LogoutButton>
-
       {windowSize.width >= 600 && (
         <Header>
           <div>
             <button onClick={() => setDate(subMonths(date, 1))}>{'<'}</button>
-            <h1>{format(date, 'MMMM - yyyy', { locale: ptBR })}</h1>
+            <h1>
+              {monthName} - {format(date, 'yyyy')}
+            </h1>
             <button onClick={() => setDate(addMonths(date, 1))}>{'>'}</button>
           </div>
         </Header>
       )}
 
       {showGraphs && (
-        <ClientNumberContainer>
-          <h4>Número de clientes</h4>
+        <GraphsContainer>
+          <h3>Número de clientes de {monthName}</h3>
 
           <ClientGraphsContainer>
             <LineChart
-              width={windowSize.width <= 800 ? windowSize.width / 1.1 : 700}
+              width={windowSize.width <= 800 ? windowSize.width / 1.2 : 700}
               height={400}
               data={data}
               margin={{ top: 20, right: 20, left: 20, bottom: 30 }}
@@ -376,26 +475,90 @@ export default function Dashboard(): JSX.Element {
               <Line type="linear" dataKey="week 6" stroke="#a31313" />
             </LineChart>
 
-            <PieChart width={500} height={300}>
-              <Pie
-                activeIndex={activeIndex}
-                labelLine={false}
-                label={(props) => renderCustomizedLabel(props)}
-                activeShape={renderActiveShape}
-                data={totalClientsByWeekInfo}
-                innerRadius={40}
-                outerRadius={80}
-                paddingAngle={5}
-                dataKey="value"
-                onMouseEnter={(_, index) => setActiveIndex(index)}
-              >
-                {totalClientsByWeekInfo.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
+            <PieChartContainer>
+              <PieChart width={500} height={300}>
+                <Pie
+                  activeIndex={activeIndex}
+                  labelLine={false}
+                  label={(props) => renderCustomizedLabel(props)}
+                  activeShape={renderActiveShape}
+                  data={totalClientsByWeekInfo}
+                  innerRadius={40}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                  onMouseEnter={(_, index) => setActiveIndex(index)}
+                >
+                  {totalClientsByWeekInfo.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+
+              <span>
+                <b>Total:</b> {totalClients}
+              </span>
+            </PieChartContainer>
           </ClientGraphsContainer>
-        </ClientNumberContainer>
+
+          <h3>Lucro de {monthName} por semana</h3>
+
+          <ProfitByWeekGraphsContainer>
+            <BarChart
+              width={500}
+              height={300}
+              data={monthProfitByWeek}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 30,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis padding={{ top: 30 }} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="profit with additionals" fill="#f5f5f5" label={{ position: 'top' }}>
+                {monthProfitByWeek.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % 20]} />
+                ))}
+              </Bar>
+            </BarChart>
+
+            <span>
+              <b>Total:</b> R$ {totalProfitWithAdditionals}
+            </span>
+
+            <BarChart
+              width={500}
+              height={300}
+              data={monthProfitByWeek}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 30,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis padding={{ top: 30 }} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="profit without additionals" fill="#f5f5f5" label={{ position: 'top' }}>
+                {monthProfitByWeek.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % 20]} />
+                ))}
+              </Bar>
+            </BarChart>
+
+            <span>
+              <b>Total:</b> R$ {totalProfitWithoutAdditionals}
+            </span>
+          </ProfitByWeekGraphsContainer>
+        </GraphsContainer>
       )}
 
       {windowSize.width < 600 && (

@@ -6,6 +6,7 @@ export const Container = styled.div`
   align-items: center;
 
   height: 100vh;
+  padding-bottom: 400px;
 `;
 
 export const Header = styled.header`
@@ -69,14 +70,15 @@ export const LogoutButton = styled.button`
   }
 `;
 
-export const ClientNumberContainer = styled.div`
+export const GraphsContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 20px;
 
-  h4 {
+  h3 {
     display: flex;
     justify-content: center;
+    margin: 20px;
   }
 `;
 
@@ -85,4 +87,18 @@ export const ClientGraphsContainer = styled.div`
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
+`;
+
+export const PieChartContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const ProfitByWeekGraphsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
 `;
