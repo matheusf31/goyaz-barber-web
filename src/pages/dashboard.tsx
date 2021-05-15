@@ -232,8 +232,8 @@ export default function Dashboard(): JSX.Element {
     },
   ]);
   const [totalClients, setTotalClients] = useState(0);
-  const [totalProfitWithAdditionals, setTotalProfitWithAdditionals] = useState(0);
-  const [totalProfitWithoutAdditionals, setTotalProfitWithoutAdditionals] = useState(0);
+  const [totalProfitWithAdditional, setTotalProfitWithAdditional] = useState(0);
+  const [totalProfitWithoutAdditional, setTotalProfitWithoutAdditional] = useState(0);
 
   const monthName = useMemo(() => {
     return format(date, 'MMMM', { locale: ptBR });
@@ -418,22 +418,21 @@ export default function Dashboard(): JSX.Element {
       },
     ];
 
-    let totalProfitWithAdditionalsInMonth = 0;
-    let totalProfitWithoutAdditionalsInMonth = 0;
+    let totalProfitWithAdditionalInMonth = 0;
+    let totalProfitWithoutAdditionalInMonth = 0;
 
     updatedData.forEach((week) => {
       if (appointmentsInfo && appointmentsInfo[week.name]) {
         week['profit with additionals'] = appointmentsInfo[week.name].profitWithAdditionals;
-        totalProfitWithAdditionalsInMonth += appointmentsInfo[week.name].profitWithAdditionals;
+        totalProfitWithAdditionalInMonth += appointmentsInfo[week.name].profitWithAdditionals;
         week['profit without additionals'] = appointmentsInfo[week.name].profitWithoutAdditionals;
-        totalProfitWithoutAdditionalsInMonth +=
-          appointmentsInfo[week.name].profitWithoutAdditionals;
+        totalProfitWithoutAdditionalInMonth += appointmentsInfo[week.name].profitWithoutAdditionals;
       }
     });
 
     setMonthProfitByWeek(updatedData);
-    setTotalProfitWithAdditionals(totalProfitWithAdditionalsInMonth);
-    setTotalProfitWithoutAdditionals(totalProfitWithoutAdditionalsInMonth);
+    setTotalProfitWithAdditional(totalProfitWithAdditionalInMonth);
+    setTotalProfitWithoutAdditional(totalProfitWithoutAdditionalInMonth);
   }, [appointmentsInfo]);
 
   return (
@@ -528,7 +527,7 @@ export default function Dashboard(): JSX.Element {
             </BarChart>
 
             <span>
-              <b>Total:</b> R$ {totalProfitWithAdditionals}
+              <b>Total:</b> R$ {totalProfitWithAdditional}
             </span>
 
             <BarChart
@@ -555,7 +554,7 @@ export default function Dashboard(): JSX.Element {
             </BarChart>
 
             <span>
-              <b>Total:</b> R$ {totalProfitWithoutAdditionals}
+              <b>Total:</b> R$ {totalProfitWithoutAdditional}
             </span>
           </ProfitByWeekGraphsContainer>
         </GraphsContainer>
