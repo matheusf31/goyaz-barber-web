@@ -11,15 +11,21 @@ interface ISignInCredential {
   password: string;
 }
 
+interface IBarbeiro {
+  id: string;
+  name: string;
+  avatar_url: string;
+}
+
 interface IAuthContextData {
-  user: Record<string, unknown>;
+  user: IBarbeiro;
   signIn(credential: ISignInCredential): Promise<void>;
   signOut(): void;
 }
 
 interface IProfile {
   token: string;
-  user: Record<string, unknown>;
+  user: IBarbeiro;
 }
 
 const AuthContext = createContext<IAuthContextData>({} as IAuthContextData);

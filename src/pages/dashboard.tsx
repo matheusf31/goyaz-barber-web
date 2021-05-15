@@ -20,6 +20,9 @@ import { addMonths, format, subMonths } from 'date-fns';
 
 import { useAuth } from '../hooks/auth';
 import api from '../services/api';
+
+import Barbeiros from '../components/pages/dashboard/Barbeiros';
+
 import { IAppointmentExtraDailyInfo } from '../dtos/_IAppointmentsDailyInfo';
 
 import {
@@ -31,6 +34,14 @@ import {
   PieChartContainer,
   ProfitByWeekGraphsContainer,
 } from '../styles/pages/Dashboard';
+
+interface IBarbeiro {
+  id: string;
+  name: string;
+  avatar_url: string;
+}
+
+export type IBarbeiros = Array<IBarbeiro>;
 
 interface IRenderActiveShape {
   cx: number;
@@ -161,13 +172,17 @@ const renderCustomizedLabel = ({
 };
 
 export default function Dashboard(): JSX.Element {
-  const { signOut, user } = useAuth();
+  const { signOut, user: loggedUser } = useAuth();
 
   const [showGraphs, setShowGraphs] = useState(false);
   const [windowSize, setWindowSize] = useState({
     width: 0,
     height: 0,
   });
+
+  const [selectedBarbeiro, setSelectedBarbeiro] = useState<IBarbeiro>(loggedUser);
+
+  const [barbeiros, setBarbeiros] = useState([] as IBarbeiros);
 
   const [appointmentsInfo, setAppointmentsInfo] = useState<IAppointmentExtraDailyInfo>();
   const [data, setData] = useState<IData>([]);
@@ -259,9 +274,9 @@ export default function Dashboard(): JSX.Element {
   useEffect(() => {
     setShowGraphs(false);
 
-    if (user) {
+    if (selectedBarbeiro) {
       api
-        .get(`appointments/daily/info/${user.id}`, {
+        .get(`appointments/daily/info/${selectedBarbeiro.id}`, {
           params: {
             month: date.getMonth() + 1,
             year: date.getFullYear(),
@@ -271,7 +286,7 @@ export default function Dashboard(): JSX.Element {
 
       setShowGraphs(true);
     }
-  }, [user, date]);
+  }, [selectedBarbeiro, date]);
 
   useEffect(() => {
     const updatedData = [
@@ -435,9 +450,27 @@ export default function Dashboard(): JSX.Element {
     setTotalProfitWithoutAdditional(totalProfitWithoutAdditionalInMonth);
   }, [appointmentsInfo]);
 
+  useEffect(() => {
+    if (loggedUser) {
+      api.get(`/providers`).then((response) => {
+        if (response.data) {
+          setBarbeiros([...response.data, loggedUser]);
+          setSelectedBarbeiro(loggedUser);
+        }
+      });
+    }
+  }, [loggedUser]);
+
   return (
     <Container>
       <LogoutButton onClick={signOut}>Logout</LogoutButton>
+
+      <Barbeiros
+        barbeiros={barbeiros}
+        selectedBarbeiro={selectedBarbeiro}
+        setSelectedBarbeiro={setSelectedBarbeiro}
+      />
+
       {windowSize.width >= 600 && (
         <Header>
           <div>
